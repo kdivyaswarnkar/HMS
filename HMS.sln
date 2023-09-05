@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.33529.622
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMS", "HMS\HMS.csproj", "{A8CD4708-3FF2-4057-8506-A9ED386499FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMS.Entities", "HMS.Entities\HMS.Entities.csproj", "{A2550D3F-F586-46B5-A07B-75D35EF4646D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A8CD4708-3FF2-4057-8506-A9ED386499FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8CD4708-3FF2-4057-8506-A9ED386499FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8CD4708-3FF2-4057-8506-A9ED386499FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2550D3F-F586-46B5-A07B-75D35EF4646D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2550D3F-F586-46B5-A07B-75D35EF4646D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2550D3F-F586-46B5-A07B-75D35EF4646D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2550D3F-F586-46B5-A07B-75D35EF4646D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
