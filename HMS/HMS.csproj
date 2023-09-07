@@ -242,6 +242,8 @@
     <Content Include="Areas\Dashboard\Views\Accomodations\_Action.cshtml" />
     <Content Include="Areas\Dashboard\Views\Accomodations\_Listing.cshtml" />
     <Content Include="Areas\Dashboard\Views\Accomodations\Index.cshtml" />
+    <Content Include="Rough\HMS\Admin_areaSetup.pdf" />
+    <Content Include="Rough\HMS\RequirementAnalysis.pdf" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
