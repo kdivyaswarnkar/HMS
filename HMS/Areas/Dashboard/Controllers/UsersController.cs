@@ -2,9 +2,12 @@
 using HMS.Entities;
 using HMS.Services;
 using HMS.ViewModels;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,6 +15,46 @@ namespace HMS.Areas.Dashboard.Controllers
 {
     public class UsersController : Controller
     {
+
+        private HMSSignInManager _signInManager;
+        private HMSUserManager _userManager;
+
+        public UsersController()
+        {
+        }
+
+        public UsersController(HMSUserManager userManager, HMSSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public HMSSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<HMSSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public HMSUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<HMSUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
+
+
         AccomodationPackagesService accomodationPackagesService = new AccomodationPackagesService();
         AccomodationsService accomodationsService = new AccomodationsService();
 
@@ -26,105 +69,147 @@ namespace HMS.Areas.Dashboard.Controllers
             model.RoleID = roleID;
             //  model.Roles = accomodationPackagesService.GetAllAccomodationPackages();
 
-            //   model.Users = accomodationsService.SearchAccomodations(searchTerm, roleID, page.Value, recordSize);
-            var totalRecords = 0;//accomodationsService.SearchAccomodationsCount(searchTerm, roleID);
-
+            model.Users = SearchUsers(searchTerm,roleID,page.Value,recordSize);
+            var totalRecords = SearchUsersCount(searchTerm, roleID);
             model.Pager = new Pager(totalRecords, page, recordSize);
 
             return View(model);
         }
 
-        [HttpGet]
-        public ActionResult Action(int? ID)
+        public IEnumerable<HMSUser> SearchUsers(string searchTerm, string roleID ,int page, int recordSize)
         {
-            AccomodationActionModel model = new AccomodationActionModel();
+           
+            var users = UserManager.Users.AsQueryable();
 
-            if (ID.HasValue) //we are trying to edit a record
+            if (!string.IsNullOrEmpty(searchTerm))
             {
-                var accomodation = accomodationsService.GetAccomodationByID(ID.Value);
-
-                model.ID = accomodation.ID;
-                model.AccomodationPackageID = accomodation.AccomodationPackageID;
-                model.Name = accomodation.Name;
-                model.Description = accomodation.Description;
+                users = users.Where(a => a.Email.ToLower().Contains(searchTerm.ToLower()));
             }
 
-            model.AccomodationPackages = accomodationPackagesService.GetAllAccomodationPackages();
+            if (!string.IsNullOrEmpty(roleID))
+            {
+             //   users = users.Where(a => a.Email.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+
+            var skip = (page - 1) * recordSize;
+
+            return users.OrderBy(x => x.Email).Skip(skip).Take(recordSize).ToList();
+        }
+
+        public int SearchUsersCount(string searchTerm, string roleID)
+        {
+
+            var users = UserManager.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                users = users.Where(a => a.Email.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            if (!string.IsNullOrEmpty(roleID))
+            {
+                //   users = users.Where(a => a.Email.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            return users.Count();
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> Action(string ID)
+        {
+            UserActionModel model = new UserActionModel();
+
+            if (!string.IsNullOrEmpty(ID)) //we are trying to edit a record
+            {
+                var user =await UserManager.FindByIdAsync(ID);
+
+                model.ID = user.Id;
+                model.FullName = user.FullName;
+                model.Email = user.Email;
+                model.Username = user.UserName;
+                model.Country = user.Country;
+                model.City = user.City;
+                model.Address = user.Address;
+            }
+
+       //     model.Roles = accomodationPackagesService.GetAllAccomodationPackages();
 
             return PartialView("_Action", model);
         }
 
         [HttpPost]
-        public JsonResult Action(AccomodationActionModel model)
+        public async Task<JsonResult> Action(UserActionModel model)
         {
             JsonResult json = new JsonResult();
 
-            var result = false;
+            IdentityResult result = null;
 
-            if (model.ID > 0) //we are trying to edit a record
+            if (!string.IsNullOrEmpty(model.ID)) //we are trying to edit a record
             {
-                var accomodation = accomodationsService.GetAccomodationByID(model.ID);
+                var user = await UserManager.FindByIdAsync(model.ID);
+       
+                user.FullName = model.FullName;
+                user.Email = model.Email;
+                user.UserName = model.Username;
+                user.Country = model.Country;
+                user.City = model.City;
+                user.Address = model.Address;
 
-                accomodation.AccomodationPackageID = model.AccomodationPackageID;
-                accomodation.Name = model.Name;
-                accomodation.Description = model.Description;
-
-                result = accomodationsService.UpdateAccomodation(accomodation);
+                result = await UserManager.UpdateAsync(user);
             }
+
             else //we are trying to create a record
             {
-                Accomodation accomodation = new Accomodation();
+                var user = new HMSUser();
+                user.FullName = model.FullName;
+                user.Email = model.Email;
+                user.UserName = model.Username;
+                user.Country = model.Country;
+                user.City = model.City;
+                user.Address = model.Address;
 
-                accomodation.AccomodationPackageID = model.AccomodationPackageID;
-                accomodation.Name = model.Name;
-                accomodation.Description = model.Description;
-
-                result = accomodationsService.SaveAccomodation(accomodation);
+                result = await UserManager.CreateAsync(user);
             }
 
-            if (result)
-            {
-                json.Data = new { Success = true };
-            }
-            else
-            {
-                json.Data = new { Success = false, Message = "Unable to perform action on Accomodation." };
-            }
+            json.Data = new { Success = result.Succeeded, Message = string.Join(",", result.Errors) };
+       
 
             return json;
         }
 
         [HttpGet]
-        public ActionResult Delete(int ID)
+        public async Task<ActionResult> Delete(string ID)
         {
-            AccomodationActionModel model = new AccomodationActionModel();
+            UserActionModel model = new UserActionModel();
 
-            var accomodation = accomodationsService.GetAccomodationByID(ID);
+            var user = await UserManager.FindByIdAsync(ID);
 
-            model.ID = accomodation.ID;
+            model.ID = user.Id;
 
             return PartialView("_Delete", model);
         }
 
         [HttpPost]
-        public JsonResult Delete(AccomodationActionModel model)
+        public async Task<JsonResult> Delete(UserActionModel model)
         {
             JsonResult json = new JsonResult();
 
-            var result = false;
+            IdentityResult result = null;
 
-            var accomodation = accomodationsService.GetAccomodationByID(model.ID);
-
-            result = accomodationsService.DeleteAccomodation(accomodation);
-
-            if (result)
+            if (!string.IsNullOrEmpty(model.ID)) //we are trying to delete a record
             {
-                json.Data = new { Success = true };
+                var user = await UserManager.FindByIdAsync(model.ID);
+                result = await UserManager.DeleteAsync(user);
+
+                json.Data = new { Success = result.Succeeded, Message = string.Join(", ", result.Errors) };
             }
             else
             {
-                json.Data = new { Success = false, Message = "Unable to perform action on Accomodation." };
+                json.Data = new { Success = false, Message = "Invalid user." };
             }
+
 
             return json;
         }
