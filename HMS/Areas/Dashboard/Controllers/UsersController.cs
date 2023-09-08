@@ -10,24 +10,24 @@ using System.Web.Mvc;
 
 namespace HMS.Areas.Dashboard.Controllers
 {
-    public class AccomodationsController : Controller
+    public class UsersController : Controller
     {
         AccomodationPackagesService accomodationPackagesService = new AccomodationPackagesService();
         AccomodationsService accomodationsService = new AccomodationsService();
 
-        public ActionResult Index(string searchTerm, int? accomodationPackageID, int? page)
+        public ActionResult Index(string searchTerm, string roleID, int? page)
         {
             int recordSize = 3;
             page = page ?? 1;
 
-            AccomodationsListingModel model = new AccomodationsListingModel();
+            UsersListingModel model = new UsersListingModel();
 
             model.SearchTerm = searchTerm;
-            model.AccomodationPackageID = accomodationPackageID;
-            model.AccomodationPackages = accomodationPackagesService.GetAllAccomodationPackages();
+            model.RoleID = roleID;
+            //  model.Roles = accomodationPackagesService.GetAllAccomodationPackages();
 
-            model.Accomodations = accomodationsService.SearchAccomodations(searchTerm, accomodationPackageID, page.Value, recordSize);
-            var totalRecords = accomodationsService.SearchAccomodationsCount(searchTerm, accomodationPackageID);
+            //   model.Users = accomodationsService.SearchAccomodations(searchTerm, roleID, page.Value, recordSize);
+            var totalRecords = 0;//accomodationsService.SearchAccomodationsCount(searchTerm, roleID);
 
             model.Pager = new Pager(totalRecords, page, recordSize);
 
