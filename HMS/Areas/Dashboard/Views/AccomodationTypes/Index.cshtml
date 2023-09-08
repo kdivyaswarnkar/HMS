@@ -16,7 +16,6 @@
                 <div class="input-group-append">
                     <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search mr-1"></i>Search</button>
                     <a class="btn btn-outline-secondary" href="@Url.Action("Index","AccomodationTypes")"><i class="fas fa-redo-alt mr-1"></i>Reset</a>
-                    @*  <button id="createButton" class="btn btn-outline-success" type="button" data-toggle="modal" data-target="#actionModal"><i class="fas fa-plus mr-1"></i>Create</button>*@
                     <button data-href="@Url.Action("Action","AccomodationTypes")" class="data-btn btn btn-outline-success" type="button" data-toggle="modal" data-target="#actionModal"><i class="fas fa-plus mr-1"></i>Create</button>
 
                 </div>
@@ -27,7 +26,6 @@
 
 <div class="row">
     <div class="col col-lg-12">
-        @*@{ Html.RenderAction("Listing"); }*@
         @{ Html.RenderPartial("_Listing", Model); }
     </div>
 </div>
@@ -40,10 +38,7 @@
 
 <script>
         $(".data-btn").click(function () {
-       /* $("#createButton").click(function () {*/
             $.ajax({
-                //action + controller
-                @*url: '@Url.Action("Action", "AccomodationTypes")',*@
                 url: $(this).attr("data-href"),
             })
             .done(function (response) {

@@ -1,6 +1,7 @@
 ﻿using HMS.Areas.Dashboard.ViewModels;
 using HMS.Entities;
 using HMS.Services;
+using HMS.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,23 +14,23 @@ namespace HMS.Areas.Dashboard.Controllers
     {
         AccomodationTypesService accomodationTypesService = new AccomodationTypesService();
         // GET: Dashboard/AccomodationTypes
-        public ActionResult Index(string searchTerm)
+        public ActionResult Index(string searchTerm, int? accomodationTypeID, int? page)
         {
+            int recordSize = 3;
+            page = page ?? 1;
+          
             AccomodationTypesListingModel model = new AccomodationTypesListingModel();
+           
             model.SearchTerm = searchTerm;
-            model.AccomodationTypes = accomodationTypesService.SearchAccomodationTypes(searchTerm);
+            model.AccomodationTypeID = accomodationTypeID;
 
-            //  model.AccomodationTypes = accomodationTypesService.GetAllAccomodationTypes();
-            // return PartialView("_Listing", model);
+            model.AccomodationTypes = accomodationTypesService.SearchAccomodationTypes(searchTerm, page.Value, recordSize); ;
+
+            var totalRecords = accomodationTypesService.SearchAccomodationTypeCount(searchTerm, accomodationTypeID);
+
+            model.Pager = new Pager(totalRecords, page, recordSize);
             return View(model);
         }
-
-        //public ActionResult Listing()
-        //{
-        //    AccomodationTypesListingModel model = new AccomodationTypesListingModel();
-        //    model.AccomodationTypes = accomodationTypesService.GetAllAccomodationTypes();
-        //    return PartialView("_Listing",model);
-        //}
 
         [HttpGet]
         public ActionResult Action(int? ID)

@@ -49,7 +49,26 @@ namespace HMS.Services
             return context.SaveChanges() > 0;
         }
 
-        public IEnumerable<AccomodationType> SearchAccomodationTypes(string searchTerm)
+        public IEnumerable<AccomodationType> SearchAccomodationTypes(string searchTerm, int page, int recordSize)
+        {
+            var context = new HMSContext();
+
+            var accomodationTypes = context.AccomodationTypes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                accomodationTypes = accomodationTypes.Where(a => a.Name.ToLower().Contains(searchTerm.ToLower()));
+            }
+            var skip = (page - 1) * recordSize;
+            //  skip = (1    -  1) = 0 * 3 = 0
+            //  skip = (2    -  1) = 1 * 3 = 3
+            //  skip = (3    -  1) = 2 * 3 = 6
+
+          //  return accomodationTypes.ToList();
+            return accomodationTypes.OrderBy(x=>x.ID).Skip(skip).Take(recordSize).ToList();
+         
+        }
+        public int SearchAccomodationTypeCount(string searchTerm,int? accomodationTypeID)
         {
             var context = new HMSContext();
 
@@ -60,7 +79,12 @@ namespace HMS.Services
                 accomodationTypes = accomodationTypes.Where(a => a.Name.ToLower().Contains(searchTerm.ToLower()));
             }
 
-            return accomodationTypes.ToList();
+            if (accomodationTypeID.HasValue && accomodationTypeID.Value > 0)
+            {
+                accomodationTypes = accomodationTypes.Where(a => a.ID == accomodationTypeID.Value);
+            }
+
+            return accomodationTypes.Count();
         }
 
     }
