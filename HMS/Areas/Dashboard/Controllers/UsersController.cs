@@ -53,11 +53,6 @@ namespace HMS.Areas.Dashboard.Controllers
             }
         }
 
-
-
-        AccomodationPackagesService accomodationPackagesService = new AccomodationPackagesService();
-        AccomodationsService accomodationsService = new AccomodationsService();
-
         public ActionResult Index(string searchTerm, string roleID, int? page)
         {
             int recordSize = 3;
