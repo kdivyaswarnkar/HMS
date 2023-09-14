@@ -179,6 +179,7 @@
     <Compile Include="Areas\Dashboard\ViewModels\RolesViewModels.cs" />
     <Compile Include="Areas\Dashboard\ViewModels\UsersViewModels.cs" />
     <Compile Include="Code\Variables.cs" />
+    <Compile Include="Controllers\AccomodationsController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -454,6 +455,7 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Accomodations\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

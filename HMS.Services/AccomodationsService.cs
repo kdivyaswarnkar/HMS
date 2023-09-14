@@ -38,6 +38,13 @@ namespace HMS.Services
             return accomodations.OrderBy(x => x.AccomodationPackageID).Skip(skip).Take(recordSize).ToList();
         }
 
+        public IEnumerable<Accomodation> GetAllAccomodationsByAccomodationPackage(int accomodationPackageID)
+        {
+            var context = new HMSContext();
+
+            return context.Accomodations.Where(x => x.AccomodationPackageID == accomodationPackageID).ToList();
+        }
+
         public int SearchAccomodationsCount(string searchTerm, int? accomodationPackageID)
         {
             var context = new HMSContext();
