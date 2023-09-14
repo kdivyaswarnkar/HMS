@@ -17,6 +17,7 @@ namespace HMS.Areas.Dashboard.Controllers
     {
         private HMSSignInManager _signInManager;
         private HMSUserManager _userManager;
+        private HMSRoleManager _roleManager;
 
         public HMSSignInManager SignInManager
         {
@@ -41,14 +42,27 @@ namespace HMS.Areas.Dashboard.Controllers
             }
         }
 
+        public HMSRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? HttpContext.GetOwinContext().Get<HMSRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
+            }
+        }
+
         public RolesController()
         {
         }
 
-        public RolesController(HMSUserManager userManager, HMSSignInManager signInManager)
+        public RolesController(HMSUserManager userManager, HMSSignInManager signInManager, HMSRoleManager roleManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            RoleManager = roleManager;
         }
 
         public ActionResult Index(string searchTerm, int? page)
@@ -71,30 +85,25 @@ namespace HMS.Areas.Dashboard.Controllers
 
         public IEnumerable<IdentityRole> SearchRoles(string searchTerm, int page, int recordSize)
         {
-            //var users = UserManager.Users.AsQueryable();
+            var roles = RoleManager.Roles.AsQueryable();
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                roles = roles.Where(a => a.Name.ToLower().Contains(searchTerm.ToLower()));
+            }
+            var skip = (page - 1) * recordSize;
 
-            //if (!string.IsNullOrEmpty(searchTerm))
-            //{
-            //    users = users.Where(a => a.Email.ToLower().Contains(searchTerm.ToLower()));
-            //}
-
-            //var skip = (page - 1) * recordSize;
-
-            //return users.OrderBy(x => x.Email).Skip(skip).Take(recordSize).ToList();
-
-            return null;
+            return roles.OrderBy(x => x.Name).Skip(skip).Take(recordSize).ToList();
         }
 
         public int SearchRolesCount(string searchTerm)
         {
-            var users = UserManager.Users.AsQueryable();
-
+            var roles = RoleManager.Roles.AsQueryable();
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                users = users.Where(a => a.Email.ToLower().Contains(searchTerm.ToLower()));
+                roles = roles.Where(a => a.Name.ToLower().Contains(searchTerm.ToLower()));
             }
 
-            return users.Count();
+            return roles.Count();
         }
 
         [HttpGet]
@@ -104,10 +113,9 @@ namespace HMS.Areas.Dashboard.Controllers
 
             if (!string.IsNullOrEmpty(ID)) //we are trying to edit a record
             {
-                //var user = await UserManager.FindByIdAsync(ID);
-
-                //model.ID = user.Id;
-                //model.FullName = user.FullName;
+                var role = await RoleManager.FindByIdAsync(ID);
+                model.ID = role.Id;
+                model.Name = role.Name;
             }
 
             return PartialView("_Action", model);
@@ -122,19 +130,19 @@ namespace HMS.Areas.Dashboard.Controllers
 
             if (!string.IsNullOrEmpty(model.ID)) //we are trying to edit a record
             {
-                //var user = await UserManager.FindByIdAsync(model.ID);
+                var role = await RoleManager.FindByIdAsync(model.ID);
 
-                //user.FullName = model.FullName;
+                role.Name = model.Name;
 
-                //result = await UserManager.UpdateAsync(user);
+                result = await RoleManager.UpdateAsync(role);
             }
             else //we are trying to create a record
             {
-                //var user = new HMSUser();
+                var role = new IdentityRole();
 
-                //user.FullName = model.FullName;
+                role.Name = model.Name;
 
-                //result = await UserManager.CreateAsync(user);
+                result = await RoleManager.CreateAsync(role);
             }
 
             json.Data = new { Success = result.Succeeded, Message = string.Join(", ", result.Errors) };
@@ -147,9 +155,9 @@ namespace HMS.Areas.Dashboard.Controllers
         {
             RoleActionModel model = new RoleActionModel();
 
-            //var user = await UserManager.FindByIdAsync(ID);
+            var role = await RoleManager.FindByIdAsync(ID);
 
-            //model.ID = user.Id;
+            model.ID = role.Id;
 
             return PartialView("_Delete", model);
         }
@@ -163,9 +171,9 @@ namespace HMS.Areas.Dashboard.Controllers
 
             if (!string.IsNullOrEmpty(model.ID)) //we are trying to delete a record
             {
-                //var user = await UserManager.FindByIdAsync(model.ID);
+                var role = await RoleManager.FindByIdAsync(model.ID);
 
-                //result = await UserManager.DeleteAsync(user);
+                result = await RoleManager.DeleteAsync(role);
 
                 json.Data = new { Success = result.Succeeded, Message = string.Join(", ", result.Errors) };
             }
