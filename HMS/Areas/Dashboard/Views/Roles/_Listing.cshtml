@@ -7,6 +7,7 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
+              
                 <th scope="col">Users</th>
                 <th scope="col">Actions</th>
             </tr>
@@ -15,21 +16,23 @@
 
             @foreach (var role in Model.Roles)
             {
-                <tr>
-                    <td>
-                        @role.Id
-                    </td>
-                    <td>
-                        @role.Name
-                    </td>
-                    <td>
-                        @role.Users.Count
-                    </td>
-                    <td>
-                        <button data-href="@Url.Action("Action", "Roles", new { ID = role.Id })" type="button" class="data-btn btn btn-primary" data-toggle="modal" data-target="#actionModal"><i class="fas fa-pen mr-1"></i> Edit</button>
-                        <button data-href="@Url.Action("Delete", "Roles", new { ID = role.Id })" type="button" class="data-btn btn btn-danger" data-toggle="modal" data-target="#actionModal"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
-                    </td>
-                </tr>
+            <tr>
+                <td>
+                    @role.Id
+                </td>
+                <td>
+                    @role.Name
+                </td>
+               
+                <td>
+                    <a href="@Url.Action("Index","Users",new { roleID=role.Id})">@role.Users.Count</a>
+                  
+                </td>
+                <td>
+                    <button data-href="@Url.Action("Action", "Roles", new { ID = role.Id })" type="button" class="data-btn btn btn-primary" data-toggle="modal" data-target="#actionModal"><i class="fas fa-pen mr-1"></i> Edit</button>
+                    <button data-href="@Url.Action("Delete", "Roles", new { ID = role.Id })" type="button" class="data-btn btn btn-danger" data-toggle="modal" data-target="#actionModal"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
+                </td>
+            </tr>
             }
         </tbody>
     </table>
