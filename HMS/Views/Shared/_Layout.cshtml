@@ -32,6 +32,7 @@
 
     <!-- Magnific Popup -->
     <link rel="stylesheet" href="~/Content/magnific-popup.css">
+    <script src="~/Scripts/site.js"></script>
 
     <!-- Flexslider  -->
     <link rel="stylesheet" href="~/Content/flexslider.css">
@@ -111,11 +112,11 @@
                                 {
                                     <li><a href="@Url.Action("Register", "Account")">Register</a></li>
                                     <li><a href="@Url.Action("Login", "Account")">Login</a></li>
- }
+                                }
                                 else
                                 {
                                     <li><a href="@Url.Action("Index", "Manage")">Hi! @User.Identity.Name</a></li>
-}
+                                }
                             </ul>
                         </div>
                     </div>
@@ -234,6 +235,7 @@
     <script src="~/Scripts/bootstrap-datepicker.js"></script>
     <!-- Main -->
     <script src="~/Scripts/main.js"></script>
+    <script src="~/Scripts/site.js"></script>
 
 </body>
 </html>

@@ -64,6 +64,11 @@ namespace HMS.Areas.Dashboard.Controllers
             JsonResult json = new JsonResult();
 
             var result = false;
+            //model.PictureIDs = "90,67,23" = ["90", "67", "23"] = {90, 67, 23}
+            List<int> pictureIDs =!string.IsNullOrEmpty(model.PictureIDs)? model.PictureIDs.Split(',').Select(x => int.Parse(x)).ToList():new List<int>();
+
+            var pictures = dashboardService.GetPicturesByIDs(pictureIDs);
+
 
             if (model.ID > 0) //we are trying to edit a record
             {
@@ -73,6 +78,9 @@ namespace HMS.Areas.Dashboard.Controllers
                 accomodationPackage.Name = model.Name;
                 accomodationPackage.NoOfRoom = model.NoOfRoom;
                 accomodationPackage.FeePerNight = model.FeePerNight;
+
+                accomodationPackage.AccomodationPackagePictures.Clear();
+                accomodationPackage.AccomodationPackagePictures.AddRange(pictures.Select(x => new AccomodationPackagePictures() {AccomodationPackageID=accomodationPackage.ID, PictureID = x.ID }));
 
                 result = accomodationPackagesService.UpdateAccomodationPackage(accomodationPackage);
             }
@@ -84,13 +92,9 @@ namespace HMS.Areas.Dashboard.Controllers
                 accomodationPackage.Name = model.Name;
                 accomodationPackage.NoOfRoom = model.NoOfRoom;
                 accomodationPackage.FeePerNight = model.FeePerNight;
-                //model.PictureIDs = "90,67,23" = ["90", "67", "23"] = {90, 67, 23}
-                List<int> pictureIDs = model.PictureIDs.Split(',').Select(x => int.Parse(x)).ToList();
-
-                var pictures = dashboardService.GetPicturesByIDs(pictureIDs);
-
-                accomodationPackage.AccomodationPackagePictures = new List<AccomodationPackagePicture>();
-                accomodationPackage.AccomodationPackagePictures.AddRange(pictures.Select(x => new AccomodationPackagePicture() { PictureID = x.ID }));
+              
+                accomodationPackage.AccomodationPackagePictures = new List<AccomodationPackagePictures>();
+                accomodationPackage.AccomodationPackagePictures.AddRange(pictures.Select(x => new AccomodationPackagePictures() { PictureID = x.ID }));
 
                 result = accomodationPackagesService.SaveAccomodationPackage(accomodationPackage);
             }

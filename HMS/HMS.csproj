@@ -264,6 +264,7 @@
     <Content Include="images\room-4.jpg" />
     <Content Include="images\room-5.jpg" />
     <Content Include="images\room-6.jpg" />
+    <Content Include="Scripts\site.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

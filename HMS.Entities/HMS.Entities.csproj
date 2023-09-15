@@ -56,7 +56,7 @@
   <ItemGroup>
     <Compile Include="Accomodation.cs" />
     <Compile Include="AccomodationPackage.cs" />
-    <Compile Include="AccomodationPackagePicture.cs" />
+    <Compile Include="AccomodationPackagePictures.cs" />
     <Compile Include="AccomodationPicture.cs" />
     <Compile Include="AccomodationType.cs" />
     <Compile Include="Booking.cs" />
