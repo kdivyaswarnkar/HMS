@@ -458,7 +458,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Accomodations\Index.cshtml" />
     <Content Include="Views\Accomodations\Details.cshtml" />
-    <Content Include="Views\Accomodations\test.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
